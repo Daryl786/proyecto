@@ -1,0 +1,16 @@
+{
+    "name": "mini-framework/mvc",
+    "description": "Mini Framework MVC educativo con autenticación mejorada y middleware",
+    "type": "project",
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "config": {
+        "vendor-dir": "vendor"
+    }
+}
