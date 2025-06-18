@@ -6,7 +6,7 @@ use App\Core\Controller;
 class HomeController extends Controller {
     public function index() {
         return $this->render('home', [
-            'title' => 'Bienvenido al Mini Framework'
+            'title' => 'Bienvenidos al proyecto 3333'
         ]);
     }
 }
