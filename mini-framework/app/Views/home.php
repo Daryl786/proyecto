@@ -8,5 +8,6 @@
     <?php else: ?>
 	<p>Por favor <a href="/login">inicia sesión</a> para acceder al dashboard.</p>
 	<a href="/register">regístrate aquí</a> para acceder al dashboard.
+	
     <?php endif; ?>
 

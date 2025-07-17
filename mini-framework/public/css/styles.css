@@ -70,3 +70,279 @@
 	    border-collapse: collapse;	
 		padding: 5px;	
 		}
+
+------
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Fondo general oscuro */
+body {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navegación superior (barra roja más pequeña) */
+nav {
+    background-color: red;
+    padding: 0.5em 1em;
+    flex-shrink: 0;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-right: 1em;
+    font-weight: bold;
+    padding: 0.3em 0.5em;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Contenedor principal que ocupa el resto del espacio */
+.main-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2em;
+}
+
+/* Contenedor del formulario */
+.form-wrapper {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Título del formulario */
+h2 {
+    text-align: center;
+    color: white;
+    margin-bottom: 1.5em;
+    font-size: 1.8em;
+}
+
+/* Formulario centrado */
+form {
+    width: 100%;
+    max-width: 350px;
+    padding: 2em;
+    background-color: #171717;
+    border-radius: 25px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease-in-out;
+}
+
+form:hover {
+    transform: scale(1.03);
+    border: 1px solid #333;
+}
+
+/* Divs de los campos del formulario */
+form div {
+    margin-bottom: 1.2rem;
+}
+
+/* Etiquetas */
+form label {
+    color: #ccc;
+    display: block;
+    margin-bottom: 0.5em;
+    font-size: 0.9em;
+}
+
+/* Inputs */
+form input[type="text"],
+form input[type="email"],
+form input[type="password"] {
+    background-color: #252525;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 0.8em 1em;
+    width: 100%;
+    font-size: 1em;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+form input:focus {
+    outline: none;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+form input::placeholder {
+    color: #888;
+}
+
+/* Texto de ayuda */
+form small {
+    color: #888;
+    font-size: 0.75em;
+    display: block;
+    margin-top: 0.3em;
+    font-style: italic;
+}
+
+/* Botón de enviar */
+form button[type="submit"] {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0.8em 1.5em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1em;
+    font-weight: 500;
+    width: 100%;
+    margin-top: 1em;
+}
+
+form button[type="submit"]:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+/* Enlaces dentro del formulario */
+form a {
+    color: #aaa;
+    font-size: 0.85em;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+form a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+/* Contenedor de enlaces centrado */
+.form-links {
+    text-align: center;
+    margin-top: 1.5em;
+}
+
+.form-links div {
+    margin-bottom: 0.8em;
+}
+
+/* Párrafo de enlaces (para registro) */
+p {
+    text-align: center;
+    margin-top: 1.5em;
+    color: #ccc;
+}
+
+p a {
+    color: #aaa;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+p a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+/* Alertas */
+.alert {
+    padding: 1em;
+    margin-bottom: 1.5em;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.alert-error {
+    background-color: rgba(248, 215, 218, 0.1);
+    color: #f8d7da;
+    border: 1px solid rgba(248, 215, 218, 0.2);
+}
+
+.alert-success {
+    background-color: rgba(212, 237, 218, 0.1);
+    color: #d4edda;
+    border: 1px solid rgba(212, 237, 218, 0.2);
+}
+
+/* Clase para errores */
+.error {
+    color: #f8d7da;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* Clase activa para navegación */
+.active {
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1em;
+    }
+    
+    form {
+        max-width: 300px;
+        padding: 1.5em;
+    }
+    
+    nav {
+        padding: 0.4em 0.8em;
+    }
+    
+    nav a {
+        margin-right: 0.8em;
+        font-size: 0.9em;
+    }
+    
+    h2 {
+        font-size: 1.5em;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 0.5em;
+    }
+    
+    form {
+        max-width: 280px;
+        padding: 1.2em;
+    }
+    
+    nav a {
+        margin-right: 0.5em;
+        font-size: 0.8em;
+    }
+}
+/* Agregar solo estas líneas al CSS existente */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+body > *:not(nav) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

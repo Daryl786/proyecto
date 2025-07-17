@@ -14,6 +14,13 @@
             <small>Usar: 1234</small>
         </div>
         
-        <button type="submit">Ingresar</button>
+	<button type="submit">Ingresar</button>
+    <div style="text-align: center; margin-top: 1em;">
+  ¿Aún no tenés cuenta? <a href="/register">Registrarse</a>
+</div>
+
+	<a href="/">¿Olvido su contraseña?</a>
+</div>
+
     </form>
 

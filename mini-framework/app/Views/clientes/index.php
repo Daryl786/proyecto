@@ -1,4 +1,5 @@
 
+
 <?php if ( count($clientes) == 0): ?>
 <h1>NO HAY CLIENTES </h1>
 <?php else: ?>
