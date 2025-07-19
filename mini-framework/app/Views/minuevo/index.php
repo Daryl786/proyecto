@@ -1,45 +1,31 @@
+<h1>Últimos Productos (¡Dinámicos!)</h1>
 
-    <h1>Últimos Artículos (¡Dinámicos!)</h1>
+<p>Aquí tienes los productos más recientes directamente de nuestra base de datos:</p>
 
-    <p>Aquí tienes los artículos más recientes directamente de nuestra base de datos:</p>
+---
 
-    ---
+<div class="productos-container">
+    <?php if (isset($datos['productos']) && !empty($datos['productos'])): ?>
+        <?php foreach ($datos['productos'] as $producto): ?>
+            <div class="producto">
+                <h2><?php echo $this->e($producto['nombreProducto'] ?? 'Producto sin nombre'); ?></h2>
+                <p><strong>Precio:</strong> $<?php echo $this->e($producto['precioProducto'] ?? '0'); ?></p>
+                <p><strong>Descripción:</strong> <?php echo $this->e($producto['descripcionProducto'] ?? 'Sin descripción'); ?></p>
+                <p><strong>Fecha de creación:</strong> <?php echo $this->e($producto['created_at'] ?? 'No disponible'); ?></p>
+                <a href="/productos/<?php echo $this->e($producto['id']); ?>">Ver detalles</a>
+            </div>
+            <hr>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p>No se encontraron productos en la base de datos.</p>
+    <?php endif; ?>
+</div>
 
-    <div class="Productos">
-        <?php if (isset($datos)): ?>
-            <h2><?php echo $this->e($datos['mititulo']); ?></h2>
-            <p><strong>Fecha:</strong> <?php echo $this->e($articleData1['date']); ?> | <strong>Autor:</strong> <?php echo $this->e($articleData1['author']); ?></p>
-            <p><?php echo $this->e($articleData1['content']); ?></p>
-	    <a href="/Productos/<?php echo $this->e($datos['title']); ?>">Leer más</a>
-        <?php else: ?>
-            <p>No se encontró el Artículo 1.</p>
-        <?php endif; ?>
-    </div>
+---
 
-    ---
-
-    <div class="article">
-        <?php if (isset($articleData2)): ?>
-            <h2><?php echo $this->e($articleData2['title']); ?></h2>
-            <p><strong>Fecha:</strong> <?php echo $this->e($articleData2['date']); ?> | <strong>Autor:</strong> <?php echo $this->e($articleData2['author']); ?></p>
-            <p><?php echo $this->e($articleData2['content']); ?></p>
-            <a href="/article/<?php echo $this->e($articleData2['title']); ?>">Leer más</a>
-        <?php else: ?>
-            <p>No se encontró el Artículo 2.</p>
-        <?php endif; ?>
-    </div>
-
-    ---
-
-    <div class="article">
-        <?php if (isset($articleData3)): ?>
-            <h2><?php echo $this->e($articleData3['title']); ?></h2>
-            <p><strong>Fecha:</strong> <?php echo $this->e($articleData3['date']); ?> | <strong>Autor:</strong> <?php echo $this->e($articleData3['author']); ?></p>
-            <p><?php echo $this->e($articleData3['content']); ?></p>
-            <a href="/article/<?php echo $this->e($articleData3['title']); ?>">Leer más</a>
-        <?php else: ?>
-            <p>No se encontró el Artículo 3.</p>
-        <?php endif; ?>
-    </div>
-    ---
-
+<div class="debug-info">
+    <h3>Información de debug:</h3>
+    <p>Título: <?php echo $this->e($datos['mititulo'] ?? 'No disponible'); ?></p>
+    <p>Otro dato: <?php echo $this->e($datos['miotrodato'] ?? 'No disponible'); ?></p>
+    <p>Total productos: <?php echo count($datos['productos'] ?? []); ?></p>
+</div>
