@@ -1,9 +1,9 @@
-    <h2>Registro de Usuario</h2>
+<h2>Registro de Usuario</h2>
     
     <form method="POST" style="max-width: 400px;">
         <div>
-            <label>Nombre:</label>
-            <input type="text" name="name" required value="<?= $this->e($input['name'] ?? '') ?>">
+            <label>Nombre de usuario:</label>
+            <input type="text" name="username" required value="<?= $this->e($input['username'] ?? '') ?>">
         </div>
         
         <div>
@@ -25,4 +25,3 @@
     </form>
     
     <p>¿Ya tienes una cuenta? <a href="/login">Inicia sesión</a></p>
-

@@ -1,79 +1,4 @@
-body { 
-            font-family: Arial, sans-serif; 
-            margin: 0; 
-            padding: 0;
-            line-height: 1.6;
-        }
-        header { 
-            background: red; 
-            color: white; 
-            padding: 1rem;
-        }
-        .container { 
-            width: 80%; 
-            margin: 0 auto;
-            padding: 20px;
-        }
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin-right: 15px;
-        }
-        nav a:hover {
-            text-decoration: underline;
-        }
-        .active { 
-            font-weight: bold; 
-        }
-        .error {
-            color: red;
-            margin-bottom: 1rem;
-        }
-        form div {
-            margin-bottom: 1rem;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        input {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-        }
-        button {
-            padding: 8px 16px;
-            background: #333;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #555;
-        }
-        .alert {
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 4px;
-        }
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-	.tabla , td, th{
-		border: 1px solid navy;
-	    border-collapse: collapse;	
-		padding: 5px;	
-		}
-
-------
-/* Reset básico */
-* {
+{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -90,7 +15,7 @@ body {
     flex-direction: column;
 }
 
-/* Navegación superior (barra roja más pequeña) */
+/* Navegación */
 nav {
     background-color: red;
     padding: 0.5em 1em;
@@ -109,7 +34,13 @@ nav a:hover {
     text-decoration: underline;
 }
 
-/* Contenedor principal que ocupa el resto del espacio */
+/* Clase activa para navegación */
+.active {
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
 .main-content {
     flex: 1;
     display: flex;
@@ -151,7 +82,6 @@ form:hover {
     border: 1px solid #333;
 }
 
-/* Divs de los campos del formulario */
 form div {
     margin-bottom: 1.2rem;
 }
@@ -164,7 +94,6 @@ form label {
     font-size: 0.9em;
 }
 
-/* Inputs */
 form input[type="text"],
 form input[type="email"],
 form input[type="password"],
@@ -307,13 +236,7 @@ p a:hover {
     color: #f8d7da;
     font-size: 0.8em;
     margin-top: 0.3em;
-}
-
-/* Clase activa para navegación */
-.active {
-    font-weight: bold;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
+    text-align: center;
 }
 
 /* ESTILOS PARA CATEGORÍAS */
@@ -335,6 +258,7 @@ p a:hover {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5em;
     margin-bottom: 2em;
+    justify-items: center;
 }
 
 .categoria-card {
@@ -344,6 +268,8 @@ p a:hover {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
     border: 1px solid #333;
+    width: 100%;
+    max-width: 350px;
 }
 
 .categoria-card:hover {
@@ -378,6 +304,7 @@ p a:hover {
     color: #ccc;
     margin-bottom: 1.5em;
     line-height: 1.5;
+    text-align: center;
 }
 
 .categoria-actions {
@@ -406,8 +333,10 @@ p a:hover {
     background-color: #1e1e1e;
     padding: 1em;
     border-radius: 10px;
-    margin-top: 1em;
+    margin: 1em auto;
     border: 1px solid #333;
+    text-align: center;
+    max-width: 600px;
 }
 
 .categoria-info p {
@@ -420,6 +349,7 @@ p a:hover {
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 1.5em;
     margin-bottom: 2em;
+    justify-items: center;
 }
 
 .servicio-card {
@@ -429,6 +359,8 @@ p a:hover {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
     border: 1px solid #333;
+    width: 100%;
+    max-width: 380px;
 }
 
 .servicio-card:hover {
@@ -463,6 +395,7 @@ p a:hover {
 
 .servicio-categoria {
     margin-bottom: 1em;
+    text-align: center;
 }
 
 .categoria-badge {
@@ -494,6 +427,7 @@ p a:hover {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    text-align: justify;
 }
 
 .servicio-meta {
@@ -513,6 +447,7 @@ p a:hover {
     width: 100%;
     max-width: 800px;
     padding: 2em;
+    margin: 0 auto;
 }
 
 .servicio-detalle {
@@ -537,6 +472,7 @@ p a:hover {
     margin: 0;
     font-size: 2.2em;
     flex: 1;
+    text-align: center;
 }
 
 .precio-principal {
@@ -581,6 +517,7 @@ p a:hover {
     color: white;
     margin-bottom: 1em;
     font-size: 1.5em;
+    text-align: center;
 }
 
 .descripcion-texto {
@@ -590,6 +527,7 @@ p a:hover {
     color: #ccc;
     line-height: 1.7;
     font-size: 1.1em;
+    text-align: justify;
 }
 
 .servicio-actions-detalle {
@@ -666,7 +604,6 @@ p a:hover {
     flex-wrap: wrap;
 }
 
-/* ESTADOS VACÍOS */
 .empty-state {
     text-align: center;
     padding: 3em;
@@ -681,6 +618,7 @@ p a:hover {
 /* FORMULARIO DE SERVICIOS */
 .form-servicio {
     max-width: 500px;
+    margin: 0 auto;
 }
 
 .form-group {
@@ -694,82 +632,36 @@ p a:hover {
     margin-top: 2em;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .main-content {
-        padding: 1em;
-    }
-    
-    .categorias-grid,
-    .servicios-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .servicio-header,
-    .servicio-header-detalle {
-        flex-direction: column;
-        gap: 1em;
-        text-align: center;
-    }
-    
-    .servicio-header h3,
-    .servicio-header-detalle h1 {
-        margin-bottom: 0.5em;
-    }
-    
-    .servicio-precio,
-    .precio-principal {
-        margin-left: 0;
-    }
-    
-    .servicio-meta {
-        flex-direction: column;
-        gap: 0.5em;
-    }
-    
-    .form-actions,
-    .action-buttons,
-    .servicio-actions-detalle {
-        flex-direction: column;
-    }
-    
-    nav {
-        padding: 0.4em 0.8em;
-    }
-    
-    nav a {
-        margin-right: 0.8em;
-        font-size: 0.9em;
-    }
-    
-    h2 {
-        font-size: 1.5em;
-    }
-    
-    .container-categorias h1,
-    .header-servicios h1 {
-        font-size: 2em;
-    }
+/* CONTENEDORES PRINCIPALES CENTRADOS */
+.container {
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-@media (max-width: 480px) {
-    .main-content {
-        padding: 0.5em;
-    }
-    
-    .form-servicio {
-        max-width: 300px;
-        padding: 1.2em;
-    }
-    
-    nav a {
-        margin-right: 0.5em;
-        font-size: 0.8em;
-    }
-    
-    .container-categorias,
-    .container-servicios,
-    .container-servicio-detalle {
-        padding: 1em;
-    }
+/* TABLAS */
+.tabla, td, th {
+    border: 1px solid #555;
+    border-collapse: collapse;
+    padding: 8px;
+    color: white;
+}
+
+.tabla {
+    width: 100%;
+    margin: 1em auto;
+    background-color: #1e1e1e;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.tabla th {
+    background-color: #dc3545;
+    color: white;
+    text-align: center;
+}
+
+.tabla td {
+    text-align: center;
 }

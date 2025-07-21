@@ -57,14 +57,14 @@ class AuthController extends Controller {
     }
 
     public function register() {
-        $name = $this->input('name');
+        $username = $this->input('username'); // Cambiado de 'name' a 'username'
         $email = $this->input('email');
         $password = $this->input('password');
         $passwordConfirm = $this->input('password_confirm');
         
         // Validar entradas
         $errors = $this->validate([
-            'name' => 'required|min:3',
+            'username' => 'required|min:3', // Cambiado de 'name' a 'username'
             'email' => 'required|email',
             'password' => 'required|min:4'
         ]);
@@ -85,7 +85,7 @@ class AuthController extends Controller {
                 'title' => 'Registro de Usuario',
                 'errors' => $errors,
                 'input' => [
-                    'name' => $name,
+                    'username' => $username, // Cambiado
                     'email' => $email
                 ]
             ]);
@@ -93,7 +93,7 @@ class AuthController extends Controller {
         
         // Crear el usuario
         $userId = $this->auth->register([
-            'name' => $name,
+            'username' => $username, // Cambiado de 'name' a 'username'
             'email' => $email,
             'password' => $password,
             'role' => 'user'
@@ -110,7 +110,7 @@ class AuthController extends Controller {
         return $this->render('auth/register', [
             'title' => 'Registro de Usuario',
             'input' => [
-                'name' => $name,
+                'username' => $username, // Cambiado
                 'email' => $email
             ]
         ]);
