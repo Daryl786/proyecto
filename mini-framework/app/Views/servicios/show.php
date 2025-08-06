@@ -1,7 +1,4 @@
-<html>
-<body>
-    
-    <div class="main-content">
+<div class="main-content">
         <div class="container-servicio-detalle">
             <?php if (isset($_SESSION['error'])): ?>
                 <div class="alert alert-error">
@@ -60,5 +57,3 @@
             </div>
         </div>
     </div>
-</body>
-</html>
