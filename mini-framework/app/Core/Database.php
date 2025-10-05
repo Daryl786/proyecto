@@ -19,11 +19,7 @@ class Database {
             );
         } catch (\PDOException $e) {
             throw new \Exception("Error de conexión a la base de datos: " . $e->getMessage());
-
         }
-    }
-  public function prepare($sql) {
-    return $this->connection->prepare($sql);
     }
 
     public static function getInstance() {
@@ -41,8 +37,5 @@ class Database {
     
     public function lastInsertId() {
         return $this->connection->lastInsertId();
-    
-  
-
     }
 }

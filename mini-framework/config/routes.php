@@ -5,33 +5,40 @@
  */
 
 use App\Middleware\AuthMiddleware;
+use App\Middleware\AdminMiddleware;
 
 // Rutas públicas
+$router->addRoute("POST","/apicategorias", "ApiController@index");
+$router->addRoute("GET","/apicategorias", "ApiController@index");
+$router->addRoute("GET","/products/pagina/:pagina", "ProductsController@todosPaginas");
+$router->addRoute("GET","/products", "ProductsController@index", [AuthMiddleware::class]);
 $router->addRoute("GET", "/", "HomeController@index");
 $router->addRoute("GET", "/login", "AuthController@showLogin");
 $router->addRoute("POST", "/login", "AuthController@login");
 $router->addRoute("GET", "/logout", "AuthController@logout");
 $router->addRoute("GET", "/register", "AuthController@showRegister");
 $router->addRoute("POST", "/register", "AuthController@register");
+$router->addRoute("GET", "/reset_password", "PasswordResetController@PasswordReset");
+$router->addRoute("POST", "/reset_password", "PasswordResetController@PasswordReset");
+$router->addRoute("GET", "/password", "PasswordResetController@PasswordReset");
+$router->addRoute("POST", "/password", "PasswordResetController@PasswordReset");
 
-// Rutas de categorías
-$router->addRoute("GET", "/listado", "CategoriaController@index");
-$router->addRoute("GET", "/categoria/:id", "CategoriaController@show");
 
-// Rutas de servicios
-$router->addRoute("GET", "/servicios", "ServicioController@index");
-$router->addRoute("GET", "/servicios/crear", "ServicioController@crear");
-$router->addRoute("POST", "/servicios/store", "ServicioController@store");
-$router->addRoute("GET", "/servicios/categoria/:id", "ServicioController@porCategoria");
-$router->addRoute("GET", "/servicios/:id", "ServicioController@show");
 
-// Rutas existentes
-$router->addRoute("GET", "/minuevo", "MinuevoController@index");
-$router->addRoute("GET", "/minv/id/:id", "MinuevoController@index");
-$router->addRoute("GET", "/clientes", "ClientesController@index");
+$router->addRoute("GET", "/categoria", "CategoriaController@index");
+
+$router->addRoute("GET", "/post", "PostController@index");
+$router->addRoute("GET", "/post/paginar/:pagina", "PostController@index",[AuthMiddleware::class]);
+$router->addRoute("GET", "/usuarios", "UsuariosController@index");
 
 // Rutas protegidas por middleware de autenticación
 $router->addRoute("GET", "/dashboard", "DashboardController@index", [AuthMiddleware::class]);
 $router->addRoute("GET", "/dashboard/:id", "DashboardController@show", [AuthMiddleware::class]);
 $router->addRoute("GET", "/profile", "ProfileController@index", [AuthMiddleware::class]);
 $router->addRoute("POST", "/profile", "ProfileController@update", [AuthMiddleware::class]);
+$router->addRoute("GET", "/usuarios/editar/:id", "UsuariosController@editar", [AuthMiddleware::class, AdminMiddleware::class]);
+$router->addRoute("POST", "/usuarios/editar/:id", "UsuariosController@editar", [AuthMiddleware::class, AdminMiddleware::class]);
+$router->addRoute("GET", "/usuarios/eliminar/:id", "UsuariosController@eliminar", [AuthMiddleware::class, AdminMiddleware::class]);
+$router->addRoute("GET", "/post/eliminar/:id", "PostController@eliminar", [AuthMiddleware::class, AdminMiddleware::class]);
+$router->addRoute("GET", "/post/crear", "PostController@crear", [AuthMiddleware::class]);
+$router->addRoute("POST", "/post/crear", "PostController@crear", [AuthMiddleware::class]);

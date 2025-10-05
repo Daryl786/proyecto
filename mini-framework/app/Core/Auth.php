@@ -40,8 +40,10 @@ class Auth {
      */
     public function attempt($email, $password) {
         $user = $this->userModel->findByEmail($email);
-        
-        if ($user && password_verify($password, $user["password"])) {
+
+        // CAMBIAR  if ($user && password_verify($password, $user["password"])) {
+       if ($user && $password === $user["password"]) {
+
             // No almacenar la contraseña en la sesión
             unset($user["password"]);
             

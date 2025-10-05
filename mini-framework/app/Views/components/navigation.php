@@ -1,18 +1,23 @@
-<nav>
-    <a href="/" class="<?= ($currentUrl === '/' || $currentUrl === '') ? 'active' : '' ?>">Inicio</a>
+<nav style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <a href="/" class="<?= ($currentUrl === '/' || $currentUrl === '') ? 'active' : '' ?>">Inicio</a>
+        
+        <?php if ($auth['check']): ?>
+            <a href="/dashboard" class="<?= (strpos($currentUrl, '/dashboard') === 0) ? 'active' : '' ?>">Dashboard</a>
+            
+            <?php if (isset($auth['user']['rol']) && $auth['user']['rol'] === 'admin'): ?>
+                <a href="/usuarios" class="<?= ($currentUrl === '/usuarios') ? 'active' : '' ?>">Usuarios</a>
+            <?php endif; ?>
+        <?php else: ?>
+            <a href="/login" class="<?= ($currentUrl === '/login') ? 'active' : '' ?>">Login</a>
+        <?php endif; ?>
+
+        <a href="/post" class="<?=($currentUrl === '/post')?'active': ''?>">Servicios</a>
+    </div>
     
     <?php if ($auth['check']): ?>
-	<a href="/dashboard" class="<?= (strpos($currentUrl, '/dashboard') === 0) ? 'active' : '' ?>">Dashboard</a>
-	<a href="/listado" class="<?= ($currentUrl === '/listado') ? 'active' : '' ?>">Categorías</a>
-	<a href="/servicios" class="<?= (strpos($currentUrl, '/servicios') === 0) ? 'active' : '' ?>">Servicios</a>
-    <a href="/logout">Cerrar sesión</a>
-    <?php else: ?>
-    <a href="/login" class="<?= ($currentUrl === '/login') ? 'active' : '' ?>">Login</a>
-    <a href="/clientes" class="<?= ($currentUrl === '/clientes') ? 'active' : '' ?>">Clientes</a>
-    <a href="/minuevo" class="<?=($currentUrl === '/minuevo')?'active': ''?>">MiControlador</a>
-    <a href="/listado" class="<?= ($currentUrl === '/listado') ? 'active' : '' ?>">Categorías</a>
-    <a href="/servicios" class="<?= (strpos($currentUrl, '/servicios') === 0) ? 'active' : '' ?>">Servicios</a>
- 
-
-  <?php endif; ?>
+        <div>
+            <a href="/logout">Cerrar sesión</a>
+        </div>
+    <?php endif; ?>
 </nav>

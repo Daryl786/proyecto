@@ -3,7 +3,7 @@ namespace App\Core;
 use App\Core\Container;
 
 
-class Model {
+abstract class Model {
     protected $db;
     protected $table;
     // La clave primaria puede seguir siendo un solo campo por defecto,
@@ -18,6 +18,7 @@ class Model {
         $query = $this->db->query("SELECT * FROM {$this->table}");
         return $query->fetchAll(\PDO::FETCH_ASSOC); // Usamos FETCH_ASSOC para obtener un array asociativo
     }
+
 
     /**
      * Encuentra un registro por una o más condiciones.
@@ -111,7 +112,54 @@ class Model {
      * @return \PDOStatement El objeto PDOStatement.
      */
     public function executeRawQuery(string $sql, array $params = []) {
-        return $this->db->query($sql, $params);
+		$query =  $this->db->query($sql, $params);
+        return $query->fetchAll(\PDO::FETCH_ASSOC); 
     }
+
+	public function rowCount($sql = ""){
+		if ( empty($sql)){
+			$sql = "SELECT count(*) nf FROM {$this->table}";
+		} else {
+			$sql = "SELECT count(*) nf FROM ($sql ) p";	
+		}
+
+        $query = $this->db->query($sql); 
+		
+        return $query->fetchAll(\PDO::FETCH_ASSOC)[0]["nf"]; 
+	}
+
+    public function allPaginado($offset= 2, $pagina = 1) {
+
+			$pagina = ( $pagina - 1 ) * $offset;
+
+			$sql = "SELECT *  FROM {$this->table} LIMIT $pagina,$offset ";
+	        $query = $this->db->query($sql); 
+		
+        return $query->fetchAll(\PDO::FETCH_ASSOC); 
+
+    }
+
+
+	public function sqlPaginado( $sql = "", $pag = 1, $offset=5){
+
+		$totalPaginas = $this->rowCount($sql);
+	
+		if ( empty( $sql ) ){
+
+			$datos = $this->allPaginado($offset, $pag);
+
+		}else{
+			$pagina = ($pag -1 ) * $offset;
+			$sql = "$sql  LIMIT   $pagina , $offset ";
+	        $query = $this->db->query($sql); 
+			$datos = 	$query->fetchAll(\PDO::FETCH_ASSOC); 
+		}
+		
+		$totalPaginas = ceil( $totalPaginas / $offset);
+
+		return [ "pagina" => $pag, "totalPaginas" => $totalPaginas, "datosTabla" => $datos];		
+	}
+
+
 }
 

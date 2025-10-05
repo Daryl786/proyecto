@@ -40,7 +40,9 @@ class View {
 
     public function render($viewPath, $data = []) {
         // Combina datos compartidos con datos específicos de la vista.
+
         $data = array_merge($this->sharedData, $data);
+
         extract($data); // Hace que las variables de $data estén disponibles en el ámbito de la vista.
 
         // Inicia el búfer de salida para capturar todo el contenido de la vista.

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?? 'Mini Framework' ?></title>
-   <link rel="StyleSheet" href="css/styles.css" />
+    <title><?= $title ?? 'Proyecto Utu 2025' ?></title>
+   <link rel="StyleSheet" href="/css/styles.css" />
 </head>
 <body>
     <header>
