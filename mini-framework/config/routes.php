@@ -22,8 +22,7 @@ $router->addRoute("GET", "/reset_password", "PasswordResetController@PasswordRes
 $router->addRoute("POST", "/reset_password", "PasswordResetController@PasswordReset");
 $router->addRoute("GET", "/password", "PasswordResetController@PasswordReset");
 $router->addRoute("POST", "/password", "PasswordResetController@PasswordReset");
-
-
+$router->addRoute("GET", "/post/ver/:id", "PostController@ver");
 
 $router->addRoute("GET", "/categoria", "CategoriaController@index");
 
@@ -39,6 +38,9 @@ $router->addRoute("POST", "/profile", "ProfileController@update", [AuthMiddlewar
 $router->addRoute("GET", "/usuarios/editar/:id", "UsuariosController@editar", [AuthMiddleware::class, AdminMiddleware::class]);
 $router->addRoute("POST", "/usuarios/editar/:id", "UsuariosController@editar", [AuthMiddleware::class, AdminMiddleware::class]);
 $router->addRoute("GET", "/usuarios/eliminar/:id", "UsuariosController@eliminar", [AuthMiddleware::class, AdminMiddleware::class]);
+$router->addRoute("GET", "/post/editar/:id", "PostController@editar", [AuthMiddleware::class]);
+$router->addRoute("POST", "/post/editar/:id", "PostController@editar", [AuthMiddleware::class]);
+$router->addRoute("POST", "/post/calificar/:id", "PostController@calificar", [AuthMiddleware::class]);
 $router->addRoute("GET", "/post/eliminar/:id", "PostController@eliminar", [AuthMiddleware::class, AdminMiddleware::class]);
 $router->addRoute("GET", "/post/crear", "PostController@crear", [AuthMiddleware::class]);
 $router->addRoute("POST", "/post/crear", "PostController@crear", [AuthMiddleware::class]);
