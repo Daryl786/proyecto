@@ -1,27 +1,34 @@
 <div class="container">
-    <h1>Dashboard de <?= htmlspecialchars($user['username']) ?></h1>
+    <h1>Mi Perfil</h1>
     
     <!-- Estadísticas -->
     <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 3rem;">
         <div class="card text-center">
+            
+            <h3 style="color: var(--text-secondary);">Servicios Publicados</h3>
+
             <h3 style="color: var(--color-primary); font-size: 2.5rem; margin-bottom: 0.5rem;">
                 <?= $totalServicios ?>
             </h3>
-            <p style="color: var(--text-secondary);">Servicios Publicados</p>
+
         </div>
         
         <div class="card text-center">
+            <h3 style="color: var(--text-secondary);">Tipo de Usuario</h3>
+            
             <h3 style="color: var(--color-success); font-size: 2.5rem; margin-bottom: 0.5rem;">
                 <?= htmlspecialchars($user['rol'] ?? 'usuario') ?>
             </h3>
-            <p style="color: var(--text-secondary);">Tipo de Usuario</p>
+
         </div>
         
         <div class="card text-center">
+            
+            <h3 style="color: var(--text-secondary);">Miembro desde</h3>
+
             <h3 style="color: var(--color-secondary); font-size: 1.2rem; margin-bottom: 0.5rem;">
                 <?= date('d/m/Y', strtotime($user['created_at'])) ?>
             </h3>
-            <p style="color: var(--text-secondary);">Miembro desde</p>
         </div>
     </div>
     

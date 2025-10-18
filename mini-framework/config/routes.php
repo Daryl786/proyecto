@@ -22,11 +22,11 @@ $router->addRoute("GET", "/reset_password", "PasswordResetController@PasswordRes
 $router->addRoute("POST", "/reset_password", "PasswordResetController@PasswordReset");
 $router->addRoute("GET", "/password", "PasswordResetController@PasswordReset");
 $router->addRoute("POST", "/password", "PasswordResetController@PasswordReset");
-$router->addRoute("GET", "/post/ver/:id", "PostController@ver");
+$router->addRoute("GET", "/post/ver/:id", "PostController@ver", [AuthMiddleware::class]);
 
 $router->addRoute("GET", "/categoria", "CategoriaController@index");
 
-$router->addRoute("GET", "/post", "PostController@index");
+$router->addRoute("GET", "/post", "PostController@index", [AuthMiddleware::class]);
 $router->addRoute("GET", "/post/paginar/:pagina", "PostController@index",[AuthMiddleware::class]);
 $router->addRoute("GET", "/usuarios", "UsuariosController@index");
 

@@ -144,15 +144,18 @@
                                     <?= str_repeat('★', $rating['rating']) . str_repeat('☆', 5 - $rating['rating']) ?>
                                 </span>
                             </div>
+
+                                  <?php if (!empty($rating['comment'])): ?>
+                            <div class="rating-comment-text">
+                                <?= nl2br(htmlspecialchars($rating['comment'])) ?>
+                            </div>
+                        <?php endif; ?>                            
+
                             <span class="rating-date">
                                 <?= date('d/m/Y', strtotime($rating['created_at'])) ?>
                             </span>
                         </div>
-                        <?php if (!empty($rating['comment'])): ?>
-                            <div class="rating-comment-text">
-                                <?= nl2br(htmlspecialchars($rating['comment'])) ?>
-                            </div>
-                        <?php endif; ?>
+                      
                     </div>
                 <?php endforeach; ?>
             </div>

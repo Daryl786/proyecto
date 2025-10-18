@@ -140,7 +140,7 @@ abstract class Model {
     }
 
 
-	public function sqlPaginado( $sql = "", $pag = 1, $offset=5){
+	public function sqlPaginado( $sql = "", $pag = 1, $offset=10){
 
 		$totalPaginas = $this->rowCount($sql);
 	
