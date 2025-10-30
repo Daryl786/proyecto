@@ -15,7 +15,7 @@
         <div class="welcome-card">
             <h2>¡Bienvenido de vuelta! 👋</h2>
             <div class="username">
-                <?= htmlspecialchars($auth['user']['username']) ?>
+                <h2> <?= htmlspecialchars($auth['user']['username']) ?> </h2>
             </div>
             <p style="opacity: 0.9; margin-bottom: 1.5rem;">
                 Continúa explorando servicios o publica uno nuevo

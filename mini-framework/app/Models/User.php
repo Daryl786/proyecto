@@ -87,30 +87,61 @@ class User extends Model {
     
     public function eliminar($userId) {
         error_log("=== ELIMINANDO USUARIO ===");
-        error_log("UserID tipo: " . gettype($userId));
-        error_log("UserID valor: '" . $userId . "'");
-        error_log("UserID var_export: " . var_export($userId, true));
+        error_log("UserID: " . $userId);
         
         try {
-            // Eliminar registros relacionados primero
-            $this->db->query("DELETE FROM password_resets WHERE user_id = ?", [$userId]);
-            $this->db->query("DELETE FROM Comments WHERE user_id = ?", [$userId]);
+            // ORDEN IMPORTANTE: Eliminar en orden inverso de dependencias
+            
+            // 1. Obtener todos los posts del usuario
+            $posts = $this->db->query("SELECT post_id FROM Posts WHERE user_id = ?", [$userId])->fetchAll();
+            
+            // 2. Eliminar comentarios de esos posts
+            foreach ($posts as $post) {
+                $this->db->query("DELETE FROM Comments WHERE post_id = ?", [$post['post_id']]);
+                error_log("Eliminados comentarios del post: " . $post['post_id']);
+            }
+            
+            // 3. Eliminar calificaciones (ratings) de los posts del usuario
+            foreach ($posts as $post) {
+                $this->db->query("DELETE FROM Ratings WHERE post_id = ?", [$post['post_id']]);
+                error_log("Eliminadas calificaciones del post: " . $post['post_id']);
+            }
+            
+            // 4. Eliminar PostTags de los posts del usuario
+            foreach ($posts as $post) {
+                $this->db->query("DELETE FROM PostTags WHERE post_id = ?", [$post['post_id']]);
+                error_log("Eliminados tags del post: " . $post['post_id']);
+            }
+            
+            // 5. Eliminar los posts del usuario
             $this->db->query("DELETE FROM Posts WHERE user_id = ?", [$userId]);
+            error_log("Eliminados posts del usuario");
             
-            // Eliminar usuario
+            // 6. Eliminar comentarios hechos por el usuario en otros posts
+            $this->db->query("DELETE FROM Comments WHERE user_id = ?", [$userId]);
+            error_log("Eliminados comentarios del usuario");
+            
+            // 7. Eliminar calificaciones hechas por el usuario
+            $this->db->query("DELETE FROM Ratings WHERE user_id = ?", [$userId]);
+            error_log("Eliminadas calificaciones del usuario");
+            
+            // 8. Eliminar password resets
+            $this->db->query("DELETE FROM password_resets WHERE user_id = ?", [$userId]);
+            error_log("Eliminados password resets");
+            
+            // 9. Finalmente, eliminar el usuario
             $query = "DELETE FROM {$this->table} WHERE user_id = ?";
-            error_log("Query: " . $query);
-            error_log("Parametros: " . var_export([$userId], true));
-            
             $stmt = $this->db->query($query, [$userId]);
             $affected = $stmt->rowCount();
             
-            error_log("Filas afectadas: " . $affected);
-            error_log("=== FIN ELIMINACION ===");
+            error_log("Usuario eliminado. Filas afectadas: " . $affected);
+            error_log("=== FIN ELIMINACION EXITOSA ===");
             
             return $affected > 0;
+            
         } catch (\Exception $e) {
-            error_log("ERROR EXCEPTION: " . $e->getMessage());
+            error_log("ERROR AL ELIMINAR USUARIO: " . $e->getMessage());
+            error_log("Trace: " . $e->getTraceAsString());
             return false;
         }
     }

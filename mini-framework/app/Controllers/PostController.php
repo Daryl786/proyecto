@@ -309,4 +309,104 @@ class PostController extends Controller{
 		
 		$this->redirect('/post/ver/' . $postId);
 	}
+	
+	/**
+	 * NUEVO MÉTODO: Contratar un servicio
+	 */
+	public function contratar($params = []) {
+		// Verificar autenticación
+		if (!$this->auth->check()) {
+			$this->session->flash('error', 'Debes iniciar sesión para contratar un servicio');
+			$this->redirect('/login');
+			return;
+		}
+		
+		$postId = $params['id'] ?? null;
+		
+		if (!$postId) {
+			$this->session->flash('error', 'Servicio no encontrado');
+			$this->redirect('/post');
+			return;
+		}
+		
+		// Verificar que el servicio existe
+		$servicio = $this->modelo->findWithUserInfo($postId);
+		
+		if (!$servicio) {
+			$this->session->flash('error', 'Servicio no encontrado');
+			$this->redirect('/post');
+			return;
+		}
+		
+		// Verificar que no es el propietario del servicio
+		if ($servicio['user_id'] == $this->auth->user()['user_id']) {
+			$this->session->flash('error', 'No puedes contratar tu propio servicio');
+			$this->redirect('/post/ver/' . $postId);
+			return;
+		}
+		
+		// Verificar que no lo haya contratado antes (activo)
+		$contratacionModel = new \App\Models\Contratacion();
+		if ($contratacionModel->usuarioYaContrato($postId, $this->auth->user()['user_id'])) {
+			$this->session->flash('error', 'Ya tienes una contratación activa de este servicio');
+			$this->redirect('/post/ver/' . $postId);
+			return;
+		}
+		
+		// Calcular fecha de finalización basada en la duración
+		$fechaFinalizacion = $this->calcularFechaFinalizacion($servicio['duracion']);
+		
+		if (!$fechaFinalizacion) {
+			$this->session->flash('error', 'No se pudo calcular la fecha de finalización. Duración inválida.');
+			$this->redirect('/post/ver/' . $postId);
+			return;
+		}
+		
+		// Crear la contratación
+		$resultado = $contratacionModel->crear(
+			$postId,
+			$this->auth->user()['user_id'],
+			$fechaFinalizacion
+		);
+		
+		if ($resultado) {
+			$this->session->flash('success', '¡Servicio contratado exitosamente! Puedes ver el tiempo restante en tu perfil.');
+			$this->redirect('/profile');
+		} else {
+			$this->session->flash('error', 'Error al contratar el servicio');
+			$this->redirect('/post/ver/' . $postId);
+		}
+	}
+	
+	/**
+	 * Calcula la fecha de finalización basada en la duración del servicio
+	 */
+	private function calcularFechaFinalizacion($duracion) {
+		if (!$duracion || strtolower($duracion) === 'a definir') {
+			// Por defecto 30 días
+			return date('Y-m-d H:i:s', strtotime('+30 days'));
+		}
+		
+		$duracion = strtolower(trim($duracion));
+		
+		// Patrones comunes en español
+		if (preg_match('/(\d+)\s*(día|dias|day|days|d)/i', $duracion, $matches)) {
+			return date('Y-m-d H:i:s', strtotime("+{$matches[1]} days"));
+		}
+		
+		if (preg_match('/(\d+)\s*(semana|semanas|week|weeks)/i', $duracion, $matches)) {
+			return date('Y-m-d H:i:s', strtotime("+{$matches[1]} weeks"));
+		}
+		
+		if (preg_match('/(\d+)\s*(mes|meses|month|months)/i', $duracion, $matches)) {
+			return date('Y-m-d H:i:s', strtotime("+{$matches[1]} months"));
+		}
+		
+		if (preg_match('/(\d+)\s*(año|años|year|years)/i', $duracion, $matches)) {
+			return date('Y-m-d H:i:s', strtotime("+{$matches[1]} years"));
+		}
+		
+		// Por defecto 30 días si no se puede parsear
+		return date('Y-m-d H:i:s', strtotime('+30 days'));
+	}
 }

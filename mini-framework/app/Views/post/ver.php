@@ -88,6 +88,50 @@
         </div>
     </div>
     
+    <!-- NUEVO: Botón de Contratación -->
+    <?php if ($auth['check'] && $servicio['user_id'] != $auth['user']['user_id']): ?>
+        <div style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); padding: 2rem; border-radius: 15px; margin-bottom: 2rem; text-align: center; color: white; box-shadow: 0 8px 20px rgba(40, 167, 69, 0.2);">
+            <h3 style="color: white; margin-bottom: 1rem;">💼 ¿Te interesa este servicio?</h3>
+            <p style="opacity: 0.95; margin-bottom: 1.5rem; font-size: 1.05rem;">
+                Contrata ahora y empieza a disfrutar de este servicio profesional
+            </p>
+            
+            <?php 
+            // Verificar si ya lo contrató
+            $contratacionModel = new \App\Models\Contratacion();
+            $yaContratado = $contratacionModel->usuarioYaContrato($servicio['post_id'], $auth['user']['user_id']);
+            ?>
+            
+            <?php if ($yaContratado): ?>
+                <div style="background-color: rgba(255, 255, 255, 0.2); padding: 1rem; border-radius: 10px;">
+                    <p style="margin: 0; font-weight: 600; font-size: 1.1rem;">
+                        ✅ Ya tienes una contratación activa de este servicio
+                    </p>
+                    <a href="/dashboard" style="color: white; text-decoration: underline; margin-top: 0.5rem; display: inline-block;">
+                        Ver mis contrataciones
+                    </a>
+                </div>
+            <?php else: ?>
+                <a href="/post/contratar/<?= $servicio['post_id'] ?>" 
+                   onclick="return confirm('¿Confirmas que deseas contratar este servicio por $<?= number_format($servicio['precio'], 2) ?> UYU?')"
+                   class="btn btn-light" 
+                   style="background-color: white; color: #28a745; font-size: 1.1rem; padding: 1rem 3rem; width: auto; font-weight: 700; border: 2px solid white;">
+                    🤝 Contratar Servicio
+                </a>
+            <?php endif; ?>
+        </div>
+    <?php elseif (!$auth['check']): ?>
+        <div style="background-color: var(--bg-tertiary); padding: 2rem; border-radius: 15px; margin-bottom: 2rem; text-align: center; border: 2px dashed var(--border-color);">
+            <h3 style="color: var(--text-primary); margin-bottom: 1rem;">🔒 Contrata este servicio</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                <a href="/login" style="color: #0066cc; font-weight: 600;">Inicia sesión</a> 
+                o 
+                <a href="/register" style="color: #0066cc; font-weight: 600;">regístrate</a> 
+                para contratar este servicio
+            </p>
+        </div>
+    <?php endif; ?>
+    
     <!-- Sistema de Calificaciones -->
     <div class="rating-section">
         <h3 style="margin-bottom: 1.5rem;">⭐ Calificaciones y Reseñas</h3>
@@ -145,7 +189,7 @@
                                 </span>
                             </div>
 
-                                  <?php if (!empty($rating['comment'])): ?>
+                            <?php if (!empty($rating['comment'])): ?>
                             <div class="rating-comment-text">
                                 <?= nl2br(htmlspecialchars($rating['comment'])) ?>
                             </div>
