@@ -36,43 +36,55 @@ class PostController extends Controller{
 	}
 	
 	public function ver($params = []) {
-		$postId = $params['id'] ?? null;
-		
-		if (!$postId) {
-			$this->session->flash('error', 'Servicio no encontrado');
-			$this->redirect('/post');
-			return;
-		}
-		
-		// Obtener servicio con información del usuario
-		$servicio = $this->modelo->findWithUserInfo($postId);
-		
-		if (!$servicio) {
-			$this->session->flash('error', 'Servicio no encontrado');
-			$this->redirect('/post');
-			return;
-		}
-		
-		// Obtener calificaciones
-		$ratingModel = new \App\Models\Rating();
-		$calificaciones = $ratingModel->getCalificacionesPost($postId);
-		$usuarioYaCalificó = false;
-		$calificacionUsuario = null;
-		
-		if ($this->auth->check()) {
-			$usuarioYaCalificó = $ratingModel->usuarioYaCalificó($postId, $this->auth->user()['user_id']);
-			$calificacionUsuario = $ratingModel->getCalificacionUsuario($postId, $this->auth->user()['user_id']);
-		}
-		
-		$this->render('post/ver', [
-			'titulo' => $servicio['title'],
-			'servicio' => $servicio,
-			'calificaciones' => $calificaciones,
-			'usuarioYaCalificó' => $usuarioYaCalificó,
-			'calificacionUsuario' => $calificacionUsuario
-		]);
-	}
-	
+    $postId = $params['id'] ?? null;
+    
+    if (!$postId) {
+        $this->session->flash('error', 'Servicio no encontrado');
+        $this->redirect('/post');
+        return;
+    }
+    
+    // Obtener servicio con información del usuario
+    $servicio = $this->modelo->findWithUserInfo($postId);
+    
+    if (!$servicio) {
+        $this->session->flash('error', 'Servicio no encontrado');
+        $this->redirect('/post');
+        return;
+    }
+    
+    // Obtener calificaciones
+    $ratingModel = new \App\Models\Rating();
+    $calificaciones = $ratingModel->getCalificacionesPost($postId);
+    $usuarioYaCalificó = false;
+    $calificacionUsuario = null;
+    $usuarioHaContratado = false;
+    
+    // Obtener comentarios
+    $commentModel = new \App\Models\ServiceComment();
+    $comentarios = $commentModel->getComentariosPost($postId);
+    $totalComentarios = $commentModel->contarComentarios($postId);
+    
+    if ($this->auth->check()) {
+        $usuarioYaCalificó = $ratingModel->usuarioYaCalificó($postId, $this->auth->user()['user_id']);
+        $calificacionUsuario = $ratingModel->getCalificacionUsuario($postId, $this->auth->user()['user_id']);
+        
+        // Verificar si el usuario ha contratado el servicio (activo o finalizado)
+        $contratacionModel = new \App\Models\Contratacion();
+        $usuarioHaContratado = $contratacionModel->usuarioHaContratado($postId, $this->auth->user()['user_id']);
+    }
+    
+    $this->render('post/ver', [
+        'titulo' => $servicio['title'],
+        'servicio' => $servicio,
+        'calificaciones' => $calificaciones,
+        'usuarioYaCalificó' => $usuarioYaCalificó,
+        'calificacionUsuario' => $calificacionUsuario,
+        'usuarioHaContratado' => $usuarioHaContratado,
+        'comentarios' => $comentarios,
+        'totalComentarios' => $totalComentarios
+    ]);
+}
 	public function eliminar($params = []) {
 		$postId = $params['id'] ?? null;
 		
@@ -311,7 +323,70 @@ class PostController extends Controller{
 	}
 	
 	/**
-	 * NUEVO MÉTODO: Contratar un servicio
+	 * NUEVO: Eliminar una calificación
+	 */
+	public function eliminarCalificacion($params = []) {
+		// Verificar autenticación
+		if (!$this->auth->check()) {
+			$this->session->flash('error', 'Debes iniciar sesión');
+			$this->redirect('/login');
+			return;
+		}
+		
+		$ratingId = $params['id'] ?? null;
+		
+		if (!$ratingId) {
+			$this->session->flash('error', 'ID de calificación no válido');
+			$this->redirect('/post');
+			return;
+		}
+		
+		$ratingModel = new \App\Models\Rating();
+		
+		// Obtener la calificación para verificar permisos
+		$rating = $ratingModel->find(['rating_id' => $ratingId]);
+		
+		if (!$rating) {
+			$this->session->flash('error', 'Calificación no encontrada');
+			$this->redirect('/post');
+			return;
+		}
+		
+		// Obtener el servicio asociado
+		$servicio = $this->modelo->find(['post_id' => $rating['post_id']]);
+		
+		if (!$servicio) {
+			$this->session->flash('error', 'Servicio no encontrado');
+			$this->redirect('/post');
+			return;
+		}
+		
+		$usuarioActual = $this->auth->user();
+		
+		// Verificar permisos: admin O propietario del servicio
+		$esAdmin = $usuarioActual['rol'] === 'admin';
+		$esPropietarioServicio = $servicio['user_id'] == $usuarioActual['user_id'];
+		
+		if (!$esAdmin && !$esPropietarioServicio) {
+			$this->session->flash('error', 'No tienes permiso para eliminar esta calificación');
+			$this->redirect('/post/ver/' . $servicio['post_id']);
+			return;
+		}
+		
+		// Eliminar la calificación
+		$resultado = $ratingModel->eliminarCalificacion($ratingId);
+		
+		if ($resultado) {
+			$this->session->flash('success', 'Calificación eliminada correctamente');
+		} else {
+			$this->session->flash('error', 'Error al eliminar la calificación');
+		}
+		
+		$this->redirect('/post/ver/' . $servicio['post_id']);
+	}
+	
+	/**
+	 * Contratar un servicio
 	 */
 	public function contratar($params = []) {
 		// Verificar autenticación
@@ -371,7 +446,7 @@ class PostController extends Controller{
 		
 		if ($resultado) {
 			$this->session->flash('success', '¡Servicio contratado exitosamente! Puedes ver el tiempo restante en tu perfil.');
-			$this->redirect('/profile');
+			$this->redirect('/dashboard');
 		} else {
 			$this->session->flash('error', 'Error al contratar el servicio');
 			$this->redirect('/post/ver/' . $postId);
@@ -409,4 +484,130 @@ class PostController extends Controller{
 		// Por defecto 30 días si no se puede parsear
 		return date('Y-m-d H:i:s', strtotime('+30 days'));
 	}
+	/**
+ * NUEVO MÉTODO: Agregar comentario a un servicio
+ */
+public function agregarComentario($params = []) {
+    // Verificar autenticación
+    if (!$this->auth->check()) {
+        $this->session->flash('error', 'Debes iniciar sesión para comentar');
+        $this->redirect('/login');
+        return;
+    }
+    
+    $postId = $params['id'] ?? null;
+    
+    if (!$postId) {
+        $this->session->flash('error', 'Servicio no encontrado');
+        $this->redirect('/post');
+        return;
+    }
+    
+    // Verificar que el servicio existe
+    $servicio = $this->modelo->find(['post_id' => $postId]);
+    
+    if (!$servicio) {
+        $this->session->flash('error', 'Servicio no encontrado');
+        $this->redirect('/post');
+        return;
+    }
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $commentText = trim($this->input('comment_text'));
+        
+        // Validar
+        if (empty($commentText)) {
+            $this->session->flash('error', 'El comentario no puede estar vacío');
+            $this->redirect('/post/ver/' . $postId);
+            return;
+        }
+        
+        if (strlen($commentText) < 3) {
+            $this->session->flash('error', 'El comentario debe tener al menos 3 caracteres');
+            $this->redirect('/post/ver/' . $postId);
+            return;
+        }
+        
+        if (strlen($commentText) > 1000) {
+            $this->session->flash('error', 'El comentario no puede exceder 1000 caracteres');
+            $this->redirect('/post/ver/' . $postId);
+            return;
+        }
+        
+        $commentModel = new \App\Models\ServiceComment();
+        $resultado = $commentModel->crear(
+            $postId, 
+            $this->auth->user()['user_id'], 
+            $commentText
+        );
+        
+        if ($resultado) {
+            $this->session->flash('success', 'Comentario publicado correctamente');
+        } else {
+            $this->session->flash('error', 'Error al publicar el comentario');
+        }
+    }
+    
+    $this->redirect('/post/ver/' . $postId);
+}
+
+/**
+ * NUEVO MÉTODO: Eliminar comentario
+ */
+public function eliminarComentario($params = []) {
+    // Verificar autenticación
+    if (!$this->auth->check()) {
+        $this->session->flash('error', 'Debes iniciar sesión');
+        $this->redirect('/login');
+        return;
+    }
+    
+    $commentId = $params['id'] ?? null;
+    
+    if (!$commentId) {
+        $this->session->flash('error', 'Comentario no encontrado');
+        $this->redirect('/post');
+        return;
+    }
+    
+    $commentModel = new \App\Models\ServiceComment();
+    
+    // Obtener el comentario para saber a qué post pertenece
+    $postId = $commentModel->getPostId($commentId);
+    
+    if (!$postId) {
+        $this->session->flash('error', 'Comentario no encontrado');
+        $this->redirect('/post');
+        return;
+    }
+    
+    // Obtener información del servicio
+    $servicio = $this->modelo->find(['post_id' => $postId]);
+    
+    if (!$servicio) {
+        $this->session->flash('error', 'Servicio no encontrado');
+        $this->redirect('/post');
+        return;
+    }
+    
+    $userId = $this->auth->user()['user_id'];
+    $isAdmin = $this->auth->user()['rol'] === 'admin';
+    $isOwner = $servicio['user_id'] == $userId;
+    $isCommentAuthor = $commentModel->perteneceAUsuario($commentId, $userId);
+    
+    // Puede eliminar si es: admin, dueño del servicio, o autor del comentario
+    if ($isAdmin || $isOwner || $isCommentAuthor) {
+        $resultado = $commentModel->eliminar($commentId, $userId, $isAdmin || $isOwner);
+        
+        if ($resultado) {
+            $this->session->flash('success', 'Comentario eliminado correctamente');
+        } else {
+            $this->session->flash('error', 'Error al eliminar el comentario');
+        }
+    } else {
+        $this->session->flash('error', 'No tienes permiso para eliminar este comentario');
+    }
+    
+    $this->redirect('/post/ver/' . $postId);
+}
 }

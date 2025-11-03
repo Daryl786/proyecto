@@ -39,7 +39,7 @@
                 Servicios Contratados
             </button>
             <button onclick="mostrarTab('misServicios')" id="tab-misServicios" class="tab-button">
-                Servicios Publicados
+                Mis Servicios Publicados
             </button>
             <?php if (!empty($serviciosContratados)): ?>
             <button onclick="mostrarTab('ventas')" id="tab-ventas" class="tab-button">
@@ -51,7 +51,7 @@
     
     <!-- Tab: Servicios Contratados (PRIMERO) -->
     <div id="content-contrataciones" class="tab-content active">
-        <h2 style="margin-bottom: 1.5rem;">Servicios Contratados</h2>
+        <h2 style="margin-bottom: 1.5rem;">Servicios que he Contratado</h2>
         
         <?php if (empty($misContrataciones)): ?>
             <div class="card text-center" style="padding: 3rem;">
@@ -69,9 +69,11 @@
                             <?php 
                             $estadoClass = $contratacion['estado'] === 'activo' ? 'badge-success' : 
                                           ($contratacion['estado'] === 'finalizado' ? 'badge-secondary' : 'badge-danger');
+                            $estadoTexto = $contratacion['estado'] === 'activo' ? '✅ Activo' : 
+                                          ($contratacion['estado'] === 'finalizado' ? '✓ Finalizado' : '❌ Cancelado');
                             ?>
                             <span class="badge <?= $estadoClass ?>">
-                                <?= ucfirst($contratacion['estado']) ?>
+                                <?= $estadoTexto ?>
                             </span>
                         </div>
                         
@@ -125,9 +127,40 @@
                                         ?>
                                     </span>
                                 </div>
+                                
+                                <!-- Botón de cancelación -->
+                                <?php if ($contratacion['puede_cancelar']): ?>
+                                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                                        <div style="background-color: #fff3cd; padding: 0.75rem; border-radius: 8px; margin-bottom: 0.75rem; border-left: 4px solid #ffc107;">
+                                            <small style="color: #856404; font-weight: 600;">
+                                                ⚠️ Puedes cancelar en las próximas <?= floor($contratacion['horas_restantes_cancelacion']) ?> horas
+                                            </small>
+                                        </div>
+                                        <a href="/post/cancelar-contratacion/<?= $contratacion['contratacion_id'] ?>" 
+                                           onclick="return confirm('¿Estás seguro de cancelar esta contratación? Esta acción no se puede deshacer.')"
+                                           class="btn btn-primary" 
+                                           style="width: 100%; background-color: #dc3545; padding: 0.75rem;">
+                                            🚫 Cancelar Contratación
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
                             <?php else: ?>
-                                <div style="text-align: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); color: var(--text-tertiary);">
-                                    Finalizado el <?= date('d/m/Y', strtotime($contratacion['fecha_finalizacion'])) ?>
+                                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                                    <?php if ($contratacion['estado'] === 'cancelado'): ?>
+                                        <div style="text-align: center; margin-bottom: 1rem;">
+                                            <span style="color: #dc3545; font-weight: 600;">❌ Contratación cancelada</span>
+                                        </div>
+                                        <a href="/post/eliminar-contratacion/<?= $contratacion['contratacion_id'] ?>" 
+                                           onclick="return confirm('¿Estás seguro de eliminar esta contratación? Esta acción no se puede deshacer.')"
+                                           class="btn btn-primary" 
+                                           style="width: 100%; background-color: #dc3545; padding: 0.75rem;">
+                                            🗑️ Eliminar Contratación
+                                        </a>
+                                    <?php else: ?>
+                                        <div style="text-align: center;">
+                                            <span style="color: var(--text-tertiary);">Finalizado el <?= date('d/m/Y', strtotime($contratacion['fecha_finalizacion'])) ?></span>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -143,7 +176,7 @@
     
     <!-- Tab: Mis Servicios Publicados (SEGUNDO) -->
     <div id="content-misServicios" class="tab-content" style="display: none;">
-        <h2 style="margin-bottom: 1.5rem;">Servicios Publicados</h2>
+        <h2 style="margin-bottom: 1.5rem;">Mis Servicios Publicados</h2>
         
         <div class="flex-center mb-4">
             <a href="/post/crear" class="btn btn-success">+ Publicar Nuevo Servicio</a>
@@ -200,7 +233,7 @@
     <!-- Tab: Mis Ventas (servicios que otros han contratado) -->
     <?php if (!empty($serviciosContratados)): ?>
     <div id="content-ventas" class="tab-content" style="display: none;">
-        <h2 style="margin-bottom: 1.5rem;">Mis Ventas (Servicios Contratados por Otros)</h2>
+        <h2 style="margin-bottom: 1.5rem;">Mis Ventas</h2>
         
         <div class="grid">
             <?php foreach ($serviciosContratados as $venta): ?>

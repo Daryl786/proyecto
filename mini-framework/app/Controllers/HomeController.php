@@ -8,7 +8,7 @@ class HomeController extends Controller {
 
 
         return $this->render('home', [
-            'title' => 'Bienvenido al Mini Framework'
+            'title' => 'ServiceHub'
         ]);
     }
 }

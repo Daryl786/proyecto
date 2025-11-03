@@ -16,8 +16,8 @@ class Contratacion extends Model {
      */
     public function crear($postId, $userId, $fechaFinalizacion, $notas = null) {
         $query = "INSERT INTO {$this->table} 
-                  (post_id, user_id, fecha_finalizacion, notas) 
-                  VALUES (?, ?, ?, ?)";
+                  (post_id, user_id, fecha_finalizacion, estado, notas) 
+                  VALUES (?, ?, ?, 'activo', ?)";
         
         $result = $this->db->query($query, [
             $postId,
@@ -140,4 +140,102 @@ class Contratacion extends Model {
         $stmt = $this->db->query($query, [$proveedorUserId]);
         return $stmt->fetchAll();
     }
+    
+    /**
+     * Cancela una contratación
+     */
+    public function cancelar($contratacionId, $userId) {
+        // Verificar que la contratación pertenece al usuario y está activa
+        $query = "SELECT * FROM {$this->table} 
+                  WHERE contratacion_id = ? AND user_id = ? AND estado = 'activo'";
+        $stmt = $this->db->query($query, [$contratacionId, $userId]);
+        $contratacion = $stmt->fetch();
+        
+        if (!$contratacion) {
+            return false;
+        }
+        
+        // Actualizar estado a cancelado
+        $updateQuery = "UPDATE {$this->table} 
+                       SET estado = 'cancelado' 
+                       WHERE contratacion_id = ?";
+        
+        return $this->db->query($updateQuery, [$contratacionId]);
+    }
+    
+    /**
+     * Verifica si una contratación puede ser cancelada
+     * Regla: Solo se puede cancelar si han pasado menos de 48 horas desde la contratación
+     */
+    public function puedeCancelar($contratacionId, $userId) {
+        $query = "SELECT *, 
+                  TIMESTAMPDIFF(HOUR, fecha_contratacion, NOW()) as horas_transcurridas
+                  FROM {$this->table} 
+                  WHERE contratacion_id = ? AND user_id = ? AND estado = 'activo'";
+        
+        $stmt = $this->db->query($query, [$contratacionId, $userId]);
+        $contratacion = $stmt->fetch();
+        
+        if (!$contratacion) {
+            return ['puede' => false, 'razon' => 'Contratación no encontrada o ya finalizada'];
+        }
+        
+        // Verificar las 48 horas desde la contratación
+        if ($contratacion['horas_transcurridas'] > 48) {
+            return [
+                'puede' => false, 
+                'razon' => 'Solo puedes cancelar dentro de las primeras 48 horas de la contratación',
+                'horas_transcurridas' => $contratacion['horas_transcurridas']
+            ];
+        }
+        
+        return [
+            'puede' => true, 
+            'razon' => 'Puede cancelar',
+            'horas_restantes' => 48 - $contratacion['horas_transcurridas']
+        ];
+    }
+    
+    /**
+     * Obtiene una contratación específica
+     */
+    public function obtenerPorId($contratacionId) {
+        $query = "SELECT * FROM {$this->table} WHERE contratacion_id = ? LIMIT 1";
+        $stmt = $this->db->query($query, [$contratacionId]);
+        return $stmt->fetch();
+    }
+    
+    /**
+     * NUEVO: Elimina una contratación cancelada
+     */
+    public function eliminar($contratacionId, $userId) {
+        // Verificar que la contratación pertenece al usuario y está cancelada
+        $query = "SELECT * FROM {$this->table} 
+                  WHERE contratacion_id = ? AND user_id = ? AND estado = 'cancelado'";
+        $stmt = $this->db->query($query, [$contratacionId, $userId]);
+        $contratacion = $stmt->fetch();
+        
+        if (!$contratacion) {
+            return false;
+        }
+        
+        // Eliminar la contratación
+        $deleteQuery = "DELETE FROM {$this->table} WHERE contratacion_id = ?";
+        $result = $this->db->query($deleteQuery, [$contratacionId]);
+        
+        return $result->rowCount() > 0;
+    }
+/**
+ * Verificar si un usuario ha contratado (finalizado o activo) un servicio
+ */
+public function usuarioHaContratado($postId, $userId) {
+    $query = "SELECT COUNT(*) as total 
+              FROM {$this->table} 
+              WHERE post_id = ? AND user_id = ? AND estado IN ('activo', 'finalizado')";
+    
+    $stmt = $this->db->query($query, [$postId, $userId]);
+    $result = $stmt->fetch();
+    
+    return $result['total'] > 0;
+}
 }

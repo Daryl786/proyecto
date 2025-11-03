@@ -145,4 +145,21 @@ class User extends Model {
             return false;
         }
     }
+	public function actualizarPerfil($userId, $data) {
+    $query = "UPDATE {$this->table} 
+              SET username = ?, apellido = ?, email = ?, cedula = ?, pais = ?, ciudad = ?
+              WHERE user_id = ?";
+    
+    $result = $this->db->query($query, [
+        $data['username'],
+        $data['apellido'],
+        $data['email'],
+        $data['cedula'],
+        $data['pais'],
+        $data['ciudad'],
+        $userId
+    ]);
+    
+    return $result->rowCount() > 0;
+}
 }

@@ -27,7 +27,7 @@
             </div>
             
             <div class="post-form-group">
-                <label for="precio">💰 Precio (UYU)</label>
+                <label for="precio">💰 Precio x dia (UYU)</label>
                 <input type="number" id="precio" name="precio" required step="0.01" min="0"
                        value="<?= htmlspecialchars($input['precio'] ?? '') ?>"
                        placeholder="Ej: 5000">
