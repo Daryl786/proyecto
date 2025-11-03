@@ -39,6 +39,36 @@ else
     error_exit "No se encontró la carpeta mini-framework en el repositorio."
 fi
 
+# --- CREAR ARCHIVO .htaccess TEMPORAL ---
+HTACCESS_TMP="/tmp/.htaccess"
+echo "🛠️ Creando archivo temporal .htaccess..."
+cat <<'EOF' > "$HTACCESS_TMP"
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^$ public/ [L]
+    RewriteRule (.*) public/$1 [L]
+</IfModule>
+
+# Denegar acceso a archivos específicos
+<FilesMatch "(\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|swp)|~)$">
+    Order allow,deny
+    Deny from all
+    Satisfy All
+</FilesMatch>
+EOF
+
+# --- MOVER .htaccess A PUBLIC ---
+echo "📦 Moviendo .htaccess a mini-framework/public..."
+sudo mkdir -p "$WWW_DIR/mini-framework/public"
+sudo mv "$HTACCESS_TMP" "$WWW_DIR/mini-framework/public/.htaccess" || error_exit "No se pudo mover el archivo .htaccess."
+
+# --- CAMBIAR PROPIETARIO Y PERMISOS ---
+echo "🔧 Ajustando permisos y propietario..."
+sudo chown -R www-data:www-data "$WWW_DIR/mini-framework"
+sudo chmod -R 755 "$WWW_DIR/mini-framework"
+
+echo "✅ Archivo .htaccess creado y movido correctamente."
+
 # --- MOVER BD_proyutu.sql ---
 if [ -f "$TMP_DIR/$SQL_FILE" ]; then
     echo "💾 Moviendo $SQL_FILE a $MYSQL_DIR..."
@@ -66,5 +96,5 @@ mysql -u root -p "$DB_NAME" < "$MYSQL_DIR/$SQL_FILE" || error_exit "Error al imp
 echo "🧹 Limpiando archivos temporales..."
 rm -rf "$TMP_DIR"
 
-echo "✅ Todo listo. mini-framework fue reemplazado en $WWW_DIR y la base de datos '$DB_NAME' importada correctamente."
+echo "✅ Todo listo. mini-framework fue reemplazado en $WWW_DIR, el archivo .htaccess fue creado y movido, y la base de datos '$DB_NAME' importada correctamente."
 
